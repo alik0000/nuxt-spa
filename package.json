@@ -11,11 +11,14 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@types/node": "^18.16.19",
-    "nuxt": "^3.6.3"
+    "autoprefixer": "^10.4.14",
+    "nuxt": "^3.6.3",
+    "postcss": "^8.4.26"
   },
   "dependencies": {
     "@nuxt/types": "^2.17.1",
     "axios": "^1.4.0",
-    "sass": "^1.63.6"
+    "sass": "^1.63.6",
+    "tailwindcss": "^3.3.3"
   }
 }
