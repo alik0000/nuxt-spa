@@ -1,13 +1,33 @@
 <template>
-  <div>
-    <h2>main page</h2>
+  <div class="mt-8">
+    <h2 class="text-4xl mb-6">Main page</h2>
+    <div class="flex items-center h-10 mb-6">
+      <input
+          v-model="searchInput"
+          @input="updateFilteredCharacters"
+          class="bg-gray-50 border h-full border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Search by name..."
+      />
+      <div class="w-28 h-full">
+        <select id="small"
+                class="block w-full px-2 m-0 h-full text-sm text-gray-900 border border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                v-model="selectedStatus"
+                @change="updateFilteredCharacters"
+        >
+          <option value="">All</option>
+          <option value="Alive">Alive</option>
+          <option value="Dead">Dead</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+      </div>
+    </div>
     <ul role="list" class="divide-y divide-gray-100">
-      <li v-for="({id, name, species, image, episode}, index) in characters" :key="id" class="flex justify-between items-center gap-x-6 py-5">
+      <li v-if="filteredCharacters.length" v-for="({id, name, species, image, episode}, index) in filteredCharacters" :key="id" class="flex justify-between items-center gap-x-6 py-5">
         <div class="flex gap-x-4">
           <img class="h-12 w-12 flex-none rounded-full bg-gray-50" :src="image" :alt="name">
           <div class="min-w-0 flex-auto">
             <NuxtLink :to="`/character/${id}`" class="text-sm font-semibold leading-6 text-gray-900">{{ name }}</NuxtLink>
-            <p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ species }}</p>
+            <p class="truncate text-xs leading-5 text-gray-500">{{ species }}</p>
           </div>
         </div>
         <div class="h-fit">
@@ -55,47 +75,27 @@
                     <span class="flex">{{ indexOfEpisode(option) }}</span>
                   </NuxtLink>
                 </li>
-                <li
-                    v-if="episode.length > 5"
-                    class="transition-colors duration-300 hover:bg-gray-200"
-                >
-                </li>
               </ul>
             </transition>
           </div>
         </div>
+      </li>
+      <li v-else class="flex justify-between items-center gap-x-6 py-5 border-b">
+        <h2 class="text-2xl">not found</h2>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import {AxiosResponse} from "axios";
-import {ICharacter} from "~/types/Character";
-
 const isOptionsExpanded = reactive([...Array(5).fill(false)])
-const nuxtApp = useNuxtApp()
-const characters = ref<ICharacter[]>([]);
-
 const btnToggle = (target: number, visible: boolean) => {
-  console.log(isOptionsExpanded)
-  console.log(target)
-  console.log(visible)
   isOptionsExpanded[target] = visible
 }
-
 const indexOfEpisode = (url: string) => {
   return url.match(/\d+(?=\D*$)/g)?.join('')
 }
 
-onMounted(async () => {
-  try {
-    const { data }: AxiosResponse<{ results: ICharacter[] }> = await nuxtApp.$axios.get('/api/character');
-    characters.value = data.results;
-  } catch (error) {
-    console.error(error);
-  }
-
-  console.log('characters: ', characters.value)
-});
+const { filteredCharacters, searchInput, selectedStatus, updateFilteredCharacters, fetchCharacters } = useCharacters();
+fetchCharacters();
 </script>
