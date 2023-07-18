@@ -1,7 +1,10 @@
+import axios from "axios";
 export default defineNuxtPlugin(() => {
     return {
         provide: {
-            hello: (msg: string) => `hello ${msg} axios plugin`
+            axios: axios.create({
+                baseURL: 'https://rickandmortyapi.com',
+            })
         }
     }
 })

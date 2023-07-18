@@ -1,12 +1,14 @@
 <template>
   <div class="app">
-    <header>{{ headerTitle }}</header>
+    <header class="bg-white py-2 shadow-lg dark:bg-neutral-600 dark:text-neutral-200">
+      <Container>
+        <Navbar/>
+      </Container>
+    </header>
     <main>
-      <slot/>
+      <Container>
+        <slot/>
+      </Container>
     </main>
   </div>
 </template>
-
-<script setup lang="ts">
-const headerTitle = 'Header'
-</script>
