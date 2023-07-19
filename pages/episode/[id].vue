@@ -26,13 +26,13 @@
   import { IEpisode } from "~/types/Episode";
 
   const nuxtApp = useNuxtApp()
-  let episode = reactive({})
+  const episode = ref({})
   const route = useRoute()
 
   onMounted(async () => {
     try {
       const {data}: AxiosResponse<{ data: IEpisode }> = await nuxtApp.$axios.get(`/api/episode/${route.params.id}`);
-      episode = data;
+      episode.value = data;
     } catch (error) {
       console.error(error);
     }

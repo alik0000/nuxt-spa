@@ -31,13 +31,13 @@
   import UIButtonBack from "~/components/UIButtonBack.vue";
 
   const nuxtApp = useNuxtApp()
-  let character = reactive({});
+  const character = ref({});
   const route = useRoute()
 
   onMounted(async () => {
     try {
       const {data}: AxiosResponse<{ data: ICharacter }> = await nuxtApp.$axios.get(`/api/character/${route.params.id}`);
-      character = data;
+      character.value = data;
     } catch (error) {
       console.error(error);
     }

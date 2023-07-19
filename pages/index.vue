@@ -88,14 +88,33 @@
 </template>
 
 <script setup lang="ts">
-const isOptionsExpanded = reactive([...Array(5).fill(false)])
-const btnToggle = (target: number, visible: boolean) => {
-  isOptionsExpanded[target] = visible
-}
-const indexOfEpisode = (url: string) => {
-  return url.match(/\d+(?=\D*$)/g)?.join('')
-}
+  import {useCharactersStore} from "~/stores/Characters";
+  import {ICharacter} from "~/types/Character";
 
-const { filteredCharacters, searchInput, selectedStatus, updateFilteredCharacters, fetchCharacters } = useCharacters();
-fetchCharacters();
+  const isOptionsExpanded = reactive([...Array(5).fill(false)])
+  const store = useCharactersStore()
+  const filteredCharacters = ref<ICharacter[]>([]);
+  const searchInput = ref<string>('');
+  const selectedStatus = ref<string>('');
+
+  async function fetchCharacters() {
+    await store.fetchCharacters()
+    updateFilteredCharacters();
+  }
+
+  function updateFilteredCharacters() {
+    filteredCharacters.value = store.characters.filter(character => {
+      const isNameMatch = character.name.toLowerCase().includes(searchInput.value.toLowerCase());
+      const isStatusMatch = !selectedStatus.value || character.status === selectedStatus.value;
+      return isNameMatch && isStatusMatch;
+    });
+  }
+  const btnToggle = (target: number, visible: boolean) => {
+    isOptionsExpanded[target] = visible
+  }
+  const indexOfEpisode = (url: string) => {
+    return url.match(/\d+(?=\D*$)/g)?.join('')
+  }
+
+  fetchCharacters();
 </script>
